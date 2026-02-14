@@ -7,17 +7,28 @@ const LoadingScreen = ({ isLoading }: { isLoading: boolean }) => {
         <motion.div
           className="fixed inset-0 z-[10000] flex flex-col items-center justify-center romantic-gradient"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.1 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
+          exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+          transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
         >
+          {/* Background glow */}
+          <div
+            className="absolute w-64 h-64 rounded-full"
+            style={{
+              background: "radial-gradient(circle, hsl(340 80% 70% / 0.3), transparent 70%)",
+              filter: "blur(40px)",
+              animation: "glowPulse 2s ease-in-out infinite",
+            }}
+          />
+
           <motion.div
-            className="text-7xl heartbeat"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, type: "spring" }}
+            className="relative text-7xl heartbeat"
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ duration: 0.6, type: "spring", damping: 12 }}
           >
             💕
           </motion.div>
+
           <motion.p
             className="mt-6 text-2xl font-romantic text-primary glow-text"
             initial={{ opacity: 0, y: 20 }}
@@ -26,6 +37,7 @@ const LoadingScreen = ({ isLoading }: { isLoading: boolean }) => {
           >
             Loading something special...
           </motion.p>
+
           <motion.div
             className="mt-4 w-48 h-1 rounded-full bg-primary/20 overflow-hidden"
             initial={{ opacity: 0 }}

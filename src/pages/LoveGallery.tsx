@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import BackButton from "@/components/BackButton";
+import PhotoLightbox from "@/components/PhotoLightbox";
 import gallery1 from "@/assets/gallery-1.jpg";
 import gallery2 from "@/assets/gallery-2.jpg";
 import gallery3 from "@/assets/gallery-3.jpg";
@@ -42,21 +44,41 @@ const quizQuestions = [
   },
 ];
 
+// Masonry heights for Pinterest-style layout
+const masonryHeights = ["h-64", "h-80", "h-56", "h-72"];
+
 const LoveGallery = () => {
   const navigate = useNavigate();
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number | null>>({});
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
 
   return (
     <motion.div
       className="min-h-screen romantic-gradient relative overflow-hidden"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
+      initial={{ opacity: 0, filter: "blur(8px)" }}
+      animate={{ opacity: 1, filter: "blur(0px)" }}
+      exit={{ opacity: 0, filter: "blur(8px)" }}
+      transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
     >
+      <BackButton />
+      <PhotoLightbox
+        images={photos}
+        currentIndex={lightboxIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onNavigate={setLightboxIndex}
+      />
+
       <div className="relative z-10 max-w-5xl mx-auto px-4 py-16">
         {/* Header */}
         <motion.h1
-          className="text-4xl sm:text-6xl font-romantic text-primary text-center glow-text mb-12"
+          className="text-4xl sm:text-6xl font-romantic text-primary text-center glow-text mb-14"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -64,27 +86,47 @@ const LoveGallery = () => {
           Every Moment With You Is Special ❤️
         </motion.h1>
 
-        {/* Photo Gallery */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-20">
+        {/* Masonry Photo Gallery */}
+        <div className="columns-1 sm:columns-2 gap-5 mb-20">
           {photos.map((photo, i) => (
             <motion.div
               key={i}
-              className="group glass-card p-3 rounded-2xl overflow-hidden"
+              className="group relative mb-5 break-inside-avoid cursor-pointer"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 + i * 0.15 }}
-              whileHover={{ scale: 1.03 }}
+              onClick={() => openLightbox(i)}
             >
-              <div className="overflow-hidden rounded-xl">
-                <img
-                  src={photo.src}
-                  alt={photo.caption}
-                  className="w-full h-56 sm:h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+              <div
+                className="relative rounded-2xl overflow-hidden"
+                style={{
+                  boxShadow: "0 4px 20px hsl(340 80% 60% / 0.15)",
+                }}
+              >
+                {/* Glow border effect */}
+                <div className="absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
+                  style={{
+                    background: "linear-gradient(135deg, hsl(340 80% 65% / 0.4), hsl(350 70% 60% / 0.2), hsl(340 90% 70% / 0.4))",
+                  }}
                 />
+
+                <div className="relative z-[1] rounded-2xl overflow-hidden glass-card p-2">
+                  <div className={`overflow-hidden rounded-xl ${masonryHeights[i]}`}>
+                    <img
+                      src={photo.src}
+                      alt={photo.caption}
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-90"
+                    />
+                  </div>
+
+                  {/* Hover caption overlay */}
+                  <div className="absolute inset-2 rounded-xl flex items-end opacity-0 group-hover:opacity-100 transition-all duration-500 bg-gradient-to-t from-black/60 via-transparent to-transparent">
+                    <p className="p-4 font-body text-white text-sm translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                      {photo.caption}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <p className="text-center mt-3 pb-2 font-body text-foreground/80 text-sm">
-                {photo.caption}
-              </p>
             </motion.div>
           ))}
         </div>
