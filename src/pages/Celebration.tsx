@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useMemo } from "react";
+import BackButton from "@/components/BackButton";
 import celebrationBg from "@/assets/celebration-bg.jpg";
 import gallery1 from "@/assets/gallery-1.jpg";
 import gallery2 from "@/assets/gallery-2.jpg";
@@ -25,10 +26,13 @@ const Celebration = () => {
   return (
     <motion.div
       className="min-h-screen relative overflow-hidden"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
+      initial={{ opacity: 0, filter: "blur(8px)" }}
+      animate={{ opacity: 1, filter: "blur(0px)" }}
+      exit={{ opacity: 0, filter: "blur(8px)" }}
+      transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
     >
+      <BackButton />
+
       {/* Background */}
       <div className="absolute inset-0">
         <img src={celebrationBg} alt="" className="w-full h-full object-cover" />

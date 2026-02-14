@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useState, useCallback } from "react";
+import BackButton from "@/components/BackButton";
 
 const noMessages = [
   "Nice try Rivuu 😜",
@@ -33,10 +34,13 @@ const ValentineQuestion = () => {
   return (
     <motion.div
       className="min-h-screen flex items-center justify-center romantic-gradient relative overflow-hidden px-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
+      initial={{ opacity: 0, filter: "blur(8px)" }}
+      animate={{ opacity: 1, filter: "blur(0px)" }}
+      exit={{ opacity: 0, filter: "blur(8px)" }}
+      transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
     >
+      <BackButton />
+
       {/* Floating decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 6 }).map((_, i) => (

@@ -2,14 +2,26 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
+import SecretMessage from "@/components/SecretMessage";
 
 const CoverPage = () => {
   const navigate = useNavigate();
   const [isClicked, setIsClicked] = useState(false);
+  const [secretClicks, setSecretClicks] = useState(0);
+  const [showSecret, setShowSecret] = useState(false);
 
   const handleClick = () => {
     setIsClicked(true);
     setTimeout(() => navigate("/gallery"), 800);
+  };
+
+  const handleNameClick = () => {
+    const newCount = secretClicks + 1;
+    setSecretClicks(newCount);
+    if (newCount >= 5) {
+      setShowSecret(true);
+      setSecretClicks(0);
+    }
   };
 
   return (
@@ -19,6 +31,8 @@ const CoverPage = () => {
       animate={{ opacity: isClicked ? 0 : 1, scale: isClicked ? 1.1 : 1 }}
       transition={{ duration: 0.8 }}
     >
+      <SecretMessage isOpen={showSecret} onClose={() => setShowSecret(false)} />
+
       {/* Background */}
       <div className="absolute inset-0">
         <img src={heroBg} alt="" className="w-full h-full object-cover" />
@@ -28,10 +42,12 @@ const CoverPage = () => {
       {/* Content */}
       <div className="relative z-10 text-center px-6">
         <motion.h1
-          className="text-6xl sm:text-8xl md:text-9xl font-romantic text-primary glow-text mb-6"
+          className="text-6xl sm:text-8xl md:text-9xl font-romantic text-primary glow-text mb-6 cursor-pointer select-none"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.3 }}
+          onClick={handleNameClick}
+          whileTap={{ scale: 0.97 }}
         >
           Rivuu ❤️
         </motion.h1>
